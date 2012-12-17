@@ -34,6 +34,6 @@ public class DefectPredictionRubyWidget extends AbstractRubyTemplate implements 
 
   @Override
   protected String getTemplatePath() {
-    return "C:/john/eclipse-workspace/sonar-examples/src/main/resources/dp/dp_widget.html.erb";
+    return "/dp/dp_widget.html.erb";
   }
 }
