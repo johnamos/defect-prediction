@@ -40,11 +40,6 @@
       <version>${sonar.buildVersion}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>net.sf.statcvs</groupId>
-      <artifactId>statcvs</artifactId>
-      <version>0.7.0</version>
-    </dependency>
   </dependencies>
 
   <build>

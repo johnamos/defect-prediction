@@ -5,6 +5,7 @@
 
 package com.revitasinc.sonar.dp.batch;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +26,10 @@ import org.sonar.api.rules.Violation;
  * 
  * @author John Amos (jamos@revitasinc.com)
  */
+@SuppressWarnings("rawtypes")
 public class MockSensorContext implements SensorContext {
+
+  private List<Measure> measures = new ArrayList<Measure>();
 
   public Event createEvent(Resource arg0, String arg1, String arg2, String arg3, Date arg4) {
     // TODO Auto-generated method stub
@@ -70,6 +74,10 @@ public class MockSensorContext implements SensorContext {
   public Measure getMeasure(Resource arg0, Metric arg1) {
     // TODO Auto-generated method stub
     return null;
+  }
+  
+  public List<Measure> getMeasures() {
+    return measures;
   }
 
   public <M> M getMeasures(MeasuresFilter<M> arg0) {
@@ -128,8 +136,8 @@ public class MockSensorContext implements SensorContext {
   }
 
   public Measure saveMeasure(Measure arg0) {
-    // TODO Auto-generated method stub
-    return null;
+    measures.add(arg0);
+    return arg0;
   }
 
   public Measure saveMeasure(Metric arg0, Double arg1) {

@@ -1,22 +1,12 @@
 package com.revitasinc.sonar.dp.batch;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.File;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-
-import net.sf.statcvs.input.Builder;
-import net.sf.statcvs.input.CvsLogfileParser;
-import net.sf.statcvs.input.LogSyntaxException;
-import net.sf.statcvs.input.RepositoryFileManager;
-import net.sf.statcvs.model.Repository;
-import net.sf.statcvs.model.Revision;
-import net.sf.statcvs.model.VersionedFile;
-import net.sf.statcvs.output.ConfigurationException;
-import net.sf.statcvs.output.ConfigurationOptions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +17,7 @@ import org.sonar.api.resources.Project;
 
 import com.revitasinc.sonar.dp.DefectPredictionMetrics;
 import com.revitasinc.sonar.dp.DefectPredictionPlugin;
+import com.revitasinc.sonar.dp.batch.parser.CvsLogParser;
 
 /**
  * Assigns a score to each source file in the project and collects scores for
@@ -49,35 +40,20 @@ public class DefectPredictionSensor implements Sensor {
   public void analyse(Project project, SensorContext sensorContext) {
     scoreMap = null;
     try {
-      if (checkRequiredProperties(project, DefectPredictionPlugin.CVS_LOGFILE_PATH,
-          "Logfile Path (sonar.cvs.logfile.path)")
-          && checkRequiredProperties(project, DefectPredictionPlugin.CVS_SOURCE_PATH,
-              "Source Path (sonar.cvs.source.path)")) {
-        ConfigurationOptions.setLogFileName((String) project.getProperty(DefectPredictionPlugin.CVS_LOGFILE_PATH));
-        ConfigurationOptions.setCheckedOutDirectory((String) project
-            .getProperty(DefectPredictionPlugin.CVS_SOURCE_PATH));
-        generateMeasures(project, sensorContext);
-      }
+      String command = (String) project.getProperty(DefectPredictionPlugin.COMMAND);
+      saveScores(
+          new CvsLogParser().parse(new File(getSourcePath(project)), command),
+          sensorContext,
+          doubleFromProperty(project, DefectPredictionPlugin.AUTHOR_CHANGE_WEIGHT,
+              DefectPredictionPlugin.DEFAULT_AUTHOR_CHANGE_WEIGHT),
+          doubleFromProperty(project, DefectPredictionPlugin.LINES_CHANGED_WEIGHT,
+              DefectPredictionPlugin.DEFAULT_LINES_CHANGED_WEIGHT),
+          doubleFromProperty(project, DefectPredictionPlugin.TIME_DECAY_EXPONENT,
+              DefectPredictionPlugin.DEFAULT_TIME_DECAY_EXPONENT));
     }
     catch (Exception e) {
       logger.error(e.getClass().getName() + " - " + e.getMessage(), e);
     }
-  }
-
-  /**
-   * @param project
-   * @param propertyName
-   * @param desc
-   * @return true if the property is supplied, false otherwise
-   */
-  private boolean checkRequiredProperties(Project project, String propertyName, String desc) {
-    boolean result = true;
-    if (project.getProperty(propertyName) == null) {
-      logger.warn("The CVS log file path is not set in Configuration > System > General Settings > "
-          + DefectPredictionPlugin.class.getSimpleName() + " > " + desc);
-      result = false;
-    }
-    return result;
   }
 
   @Override
@@ -87,122 +63,59 @@ public class DefectPredictionSensor implements Sensor {
 
   /**
    * Reads the revision data from the scm repository to calculate a score for
-   * each file and saves a Measure for each of the top scoring files.
-   * 
-   * @param sensorContext
-   * @throws LogSyntaxException
-   * @throws IOException
-   * @throws ConfigurationException
-   */
-  public void generateMeasures(Project project, SensorContext sensorContext) throws LogSyntaxException, IOException,
-      ConfigurationException {
-    logger.info("Parsing CVS log '" + ConfigurationOptions.getLogFileName() + "'");
-
-    Builder builder = initBuilder();
-    Repository repository = builder.createCvsContent();
-    logWarnings(repository, builder);
-    saveScores(project, repository, sensorContext);
-
-    builder.clean();
-    builder = null;
-  }
-
-  /**
-   * Initializes the Builder object for reading data from the CVS repository.
-   * 
-   * @return an initialized Builder object
-   * @throws LogSyntaxException
-   * @throws IOException
-   */
-  private Builder initBuilder() throws LogSyntaxException, IOException {
-    Reader logReader = null;
-    Builder builder = null;
-    try {
-      logReader = new FileReader(ConfigurationOptions.getLogFileName());
-      final RepositoryFileManager repFileMan = new RepositoryFileManager(ConfigurationOptions.getCheckedOutDirectory());
-
-      builder = new Builder(repFileMan, ConfigurationOptions.getIncludePattern(),
-          ConfigurationOptions.getExcludePattern(), ConfigurationOptions.getSymbolicNamesPattern());
-      new CvsLogfileParser(logReader, builder).parse();
-    }
-    finally {
-      if (logReader != null) {
-        logReader.close();
-      }
-    }
-    if (ConfigurationOptions.getProjectName() == null) {
-      ConfigurationOptions.setProjectName(builder.getProjectName());
-    }
-    return builder;
-  }
-
-  /**
-   * Logs warnings found during the analysis.
-   * 
-   * @param repository
-   * @param builder
-   */
-  private void logWarnings(Repository repository, Builder builder) {
-    if (repository.isEmpty()) {
-      if (builder.allRejectedByExcludePattern()) {
-        logger.warn("Exclude pattern '" + ConfigurationOptions.getExcludePattern()
-            + "' removed all files from repository");
-      }
-      else if (builder.allRejectedByIncludePattern()) {
-        logger.warn("Include pattern '" + ConfigurationOptions.getIncludePattern()
-            + "' rejected all files from repository");
-      }
-      else {
-        logger.warn("Empty repository");
-      }
-    }
-    if (builder.isLocalFilesNotFound()) {
-      logger.warn("The log references many files that do not exist in the local copy.");
-      logger.warn("Reports will be inaccurate or broken.");
-      logger.warn("Log not generated in '" + ConfigurationOptions.getCheckedOutDirectory() + "'?");
-    }
-    else if (!builder.hasLocalCVSMetadata()) {
-      logger.warn("No CVS metadata found in working copy. Reports may be inaccurate.");
-    }
-    else if (builder.isLogAndLocalFilesOutOfSync()) {
-      logger.warn("Log and working copy are out of sync. Reports will be inaccurate.");
-    }
-  }
-
-  /**
-   * Calculates and saves the score for each file using the code from
+   * each file and saves a Measure for each of the top scoring files. Calculates
+   * and saves the score for each file using the code from
    * https://github.com/igrigorik/bugspots/blob/master/lib/bugspots/scanner.rb
    * <p>
    * t = 1 - ((Time.now - fix.date).to_f / (Time.now - fixes.last.date)) <br>
    * hotspots[file] += 1/(1+Math.exp((-12*t)+12))
+   * 
+   * @param map
+   * @param sensorContext
+   * @param authorChangeWeight
+   * @param lineWeight
+   * @param timeDecay
    */
-  private void saveScores(Project project, Repository repository, SensorContext sensorContext) {
+  void saveScores(Map<String, List<RevisionInfo>> map, SensorContext sensorContext, double authorChangeWeight,
+      double lineWeight, double timeDecay) {
     final long startTime = System.currentTimeMillis();
-    double authorChangeWeight = doubleFromProperty(project, DefectPredictionPlugin.AUTHOR_CHANGE_WEIGHT,
-        DefectPredictionPlugin.DEFAULT_AUTHOR_CHANGE_WEIGHT);
-    double lineWeight = doubleFromProperty(project, DefectPredictionPlugin.LINES_CHANGED_WEIGHT,
-        DefectPredictionPlugin.DEFAULT_LINES_CHANGED_WEIGHT);
-    double timeDecay = doubleFromProperty(project, DefectPredictionPlugin.TIME_DECAY_EXPONENT,
-        DefectPredictionPlugin.DEFAULT_TIME_DECAY_EXPONENT);
     Set<FileScore> set = new TreeSet<FileScore>();
-    double projectDuration = startTime - repository.getRevisions().iterator().next().getDate().getTime();
-    for (VersionedFile file : repository.getFiles()) {
+    double projectDuration = startTime - getEarliestCommit(map);
+    for (Entry<String, List<RevisionInfo>> entry : map.entrySet()) {
       double score = 0.0;
       String lastAuthor = null;
-      for (Revision revision : file.getRevisions()) {
+      for (RevisionInfo revision : entry.getValue()) {
         if (revision.getAuthor() != null) {
-          double authorChange = (lastAuthor != null && !lastAuthor.equals(revision.getAuthor().getName())) ? authorChangeWeight
+          double authorChange = (lastAuthor != null && !lastAuthor.equals(revision.getAuthor())) ? authorChangeWeight
               : 1.0;
           double ti = 1.0 - ((startTime - revision.getDate().getTime()) / projectDuration);
-          score += authorChange * (lineWeight * revision.getNewLines()) / (1 + Math.exp((-timeDecay * ti) + timeDecay));
-          lastAuthor = revision.getAuthor().getName();
+          score += authorChange * (lineWeight * revision.getAddedLineCount())
+              / (1 + Math.exp((-timeDecay * ti) + timeDecay));
+          lastAuthor = revision.getAuthor();
         }
       }
-      set.add(new FileScore(file.getFilenameWithPath(), score));
+      set.add(new FileScore(entry.getKey(), score));
     }
     set = normalizeScores(set);
     buildScoreMap(set);
     buildSortedMeasure(set, sensorContext);
+  }
+
+  /**
+   * @param map
+   * @return the earliest commit for all files in the supplied revision history
+   *         (can be used as the project start date)
+   */
+  private long getEarliestCommit(Map<String, List<RevisionInfo>> map) {
+    long result = System.currentTimeMillis();
+    for (List<RevisionInfo> list : map.values()) {
+      for (RevisionInfo rev : list) {
+        if (rev.getDate().getTime() < result) {
+          result = rev.getDate().getTime();
+        }
+      }
+    }
+    return result;
   }
 
   /**
@@ -278,5 +191,26 @@ public class DefectPredictionSensor implements Sensor {
    */
   public static Map<String, Double> getScoreMap() {
     return scoreMap;
+  }
+
+  /**
+   * @param project
+   * @return the path to the source code for the supplied project
+   */
+  private String getSourcePath(Project project) {
+    String result = project.getFileSystem().getBasedir().getPath();
+    if (result != null) {
+      String subfolder = (String) project.getProperty(DefectPredictionPlugin.SOURCE_PATH);
+      if (subfolder != null) {
+        // absolute path
+        if (subfolder.startsWith("/") || subfolder.substring(1).startsWith(":\\")) {
+          result = subfolder;
+        }
+        else {
+          result = new File(result, subfolder).getPath();
+        }
+      }
+    }
+    return result;
   }
 }
