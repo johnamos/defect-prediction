@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.revitasinc.sonar.dp.batch.RevisionInfo;
 
 /**
- * Extracts revision data from a CVS log file.
+ * Extracts revision data from a Git log.
  * 
  * @author John Amos (jamos@revitasinc.com)
  */
@@ -44,7 +44,7 @@ public class GitLogParser implements ScmLogParser {
   private static Logger logger = LoggerFactory.getLogger(GitLogParser.class);
 
   public boolean isRecognized(String command) {
-    return command.matches("git .*");
+    return command.startsWith("git ");
   }
 
   public Map<String, List<RevisionInfo>> parse(File workingDir, String command) {

@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.revitasinc.sonar.dp.batch.RevisionInfo;
 
 /**
- * Extracts revision data from a CVS log file.
+ * Extracts revision data from a CVS log.
  * 
  * @author John Amos (jamos@revitasinc.com)
  */
@@ -54,7 +54,7 @@ public class CvsLogParser implements ScmLogParser {
   private static Logger logger = LoggerFactory.getLogger(CvsLogParser.class);
 
   public boolean isRecognized(String command) {
-    return command.matches("cvs .*");
+    return command.startsWith("cvs ");
   }
 
   public Map<String, List<RevisionInfo>> parse(File workingDir, String command) {
@@ -79,15 +79,13 @@ public class CvsLogParser implements ScmLogParser {
         }
         else if (line.equals(FILE_SEPARATOR)) {
           isRevision = false;
-          if (currentFile != null && !revList.isEmpty()) {
-            result.put(currentFile, revList);
-          }
+          putResult(result, currentFile, revList);
         }
         else if (isRevision) {
-          if (line.startsWith(DATE) && line.contains(LINES)) {
+          if (isDataLine(line)) {
             revInfo = infoFromLine(line, df);
           }
-          else if (!line.startsWith(REVISION) && !line.startsWith(BRANCHES) && revInfo != null) {
+          else if (isCommentLine(line, revInfo)) {
             revList.add(new RevisionInfo(revInfo.getAuthor(), revInfo.getDate(), line, revInfo.getAddedLineCount()));
             revInfo = null;
           }
@@ -98,6 +96,38 @@ public class CvsLogParser implements ScmLogParser {
       logger.error(EMPTY_STRING, e);
     }
     return result;
+  }
+
+  /**
+   * @param line
+   * @param revInfo
+   * @return true if this is the first comment line
+   */
+  private boolean isCommentLine(String line, RevisionInfo revInfo) {
+    return !line.startsWith(REVISION) && !line.startsWith(BRANCHES) && revInfo != null;
+  }
+
+  /**
+   * @param line
+   * @return true if this is a data line that contains the date of the commit
+   *         and the number of lines added
+   */
+  private boolean isDataLine(String line) {
+    return line.startsWith(DATE) && line.contains(LINES);
+  }
+
+  /**
+   * Puts the supplied revList into the supplied Map using the supplied
+   * currentFile as the key in the Map.
+   * 
+   * @param result
+   * @param currentFile
+   * @param revList
+   */
+  private void putResult(Map<String, List<RevisionInfo>> result, String currentFile, List<RevisionInfo> revList) {
+    if (currentFile != null && !revList.isEmpty()) {
+      result.put(currentFile, revList);
+    }
   }
 
   /**

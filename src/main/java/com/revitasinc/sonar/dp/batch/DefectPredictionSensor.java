@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.Sensor;
@@ -17,7 +18,7 @@ import org.sonar.api.resources.Project;
 
 import com.revitasinc.sonar.dp.DefectPredictionMetrics;
 import com.revitasinc.sonar.dp.DefectPredictionPlugin;
-import com.revitasinc.sonar.dp.batch.parser.CvsLogParser;
+import com.revitasinc.sonar.dp.batch.parser.ScmLogParserFactory;
 
 /**
  * Assigns a score to each source file in the project and collects scores for
@@ -42,14 +43,16 @@ public class DefectPredictionSensor implements Sensor {
     try {
       String command = (String) project.getProperty(DefectPredictionPlugin.COMMAND);
       saveScores(
-          new CvsLogParser().parse(new File(getSourcePath(project)), command),
+          ScmLogParserFactory.getParser(command).parse(new File(getSourcePath(project)), command),
           sensorContext,
           doubleFromProperty(project, DefectPredictionPlugin.AUTHOR_CHANGE_WEIGHT,
               DefectPredictionPlugin.DEFAULT_AUTHOR_CHANGE_WEIGHT),
           doubleFromProperty(project, DefectPredictionPlugin.LINES_CHANGED_WEIGHT,
               DefectPredictionPlugin.DEFAULT_LINES_CHANGED_WEIGHT),
           doubleFromProperty(project, DefectPredictionPlugin.TIME_DECAY_EXPONENT,
-              DefectPredictionPlugin.DEFAULT_TIME_DECAY_EXPONENT));
+              DefectPredictionPlugin.DEFAULT_TIME_DECAY_EXPONENT),
+          (String) project.getProperty(DefectPredictionPlugin.FILE_NAME_REGEX),
+          (String) project.getProperty(DefectPredictionPlugin.COMMENT_REGEX));
     }
     catch (Exception e) {
       logger.error(e.getClass().getName() + " - " + e.getMessage(), e);
@@ -77,15 +80,18 @@ public class DefectPredictionSensor implements Sensor {
    * @param timeDecay
    */
   void saveScores(Map<String, List<RevisionInfo>> map, SensorContext sensorContext, double authorChangeWeight,
-      double lineWeight, double timeDecay) {
+      double lineWeight, double timeDecay, String fileNameRegex, String commentRegex) {
     final long startTime = System.currentTimeMillis();
     Set<FileScore> set = new TreeSet<FileScore>();
     double projectDuration = startTime - getEarliestCommit(map);
     for (Entry<String, List<RevisionInfo>> entry : map.entrySet()) {
+      if (!isFileIncluded(entry.getKey(), fileNameRegex)) {
+        continue;
+      }
       double score = 0.0;
       String lastAuthor = null;
       for (RevisionInfo revision : entry.getValue()) {
-        if (revision.getAuthor() != null) {
+        if (isRevisionIncluded(revision, commentRegex)) {
           double authorChange = (lastAuthor != null && !lastAuthor.equals(revision.getAuthor())) ? authorChangeWeight
               : 1.0;
           double ti = 1.0 - ((startTime - revision.getDate().getTime()) / projectDuration);
@@ -99,6 +105,26 @@ public class DefectPredictionSensor implements Sensor {
     set = normalizeScores(set);
     buildScoreMap(set);
     buildSortedMeasure(set, sensorContext);
+  }
+
+  /**
+   * @param fileName
+   * @param regex
+   * @return true if the supplied fileName is included in the results, false
+   *         otherwise
+   */
+  private boolean isFileIncluded(String fileName, String regex) {
+    return (StringUtils.isEmpty(regex) || fileName == null || fileName.matches(regex));
+  }
+
+  /**
+   * @param revision
+   * @param commentRegex
+   * @return true if the supplied RevisionInfo should be included in the score
+   */
+  private boolean isRevisionIncluded(RevisionInfo revision, String commentRegex) {
+    return revision.getAuthor() != null
+        && (commentRegex == null || revision.getComment() == null || revision.getComment().matches(commentRegex));
   }
 
   /**
