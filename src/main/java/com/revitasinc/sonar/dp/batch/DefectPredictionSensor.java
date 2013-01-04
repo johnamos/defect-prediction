@@ -43,6 +43,7 @@ public class DefectPredictionSensor implements Sensor {
     try {
       String command = (String) project.getProperty(DefectPredictionPlugin.COMMAND);
       saveScores(
+          project,
           ScmLogParserFactory.getParser(command).parse(new File(getSourcePath(project)), command),
           sensorContext,
           doubleFromProperty(project, DefectPredictionPlugin.AUTHOR_CHANGE_WEIGHT,
@@ -73,19 +74,20 @@ public class DefectPredictionSensor implements Sensor {
    * t = 1 - ((Time.now - fix.date).to_f / (Time.now - fixes.last.date)) <br>
    * hotspots[file] += 1/(1+Math.exp((-12*t)+12))
    * 
+   * @param project
    * @param map
    * @param sensorContext
    * @param authorChangeWeight
    * @param lineWeight
    * @param timeDecay
    */
-  void saveScores(Map<String, List<RevisionInfo>> map, SensorContext sensorContext, double authorChangeWeight,
-      double lineWeight, double timeDecay, String fileNameRegex, String commentRegex) {
+  void saveScores(Project project, Map<String, List<RevisionInfo>> map, SensorContext sensorContext,
+      double authorChangeWeight, double lineWeight, double timeDecay, String fileNameRegex, String commentRegex) {
     final long startTime = System.currentTimeMillis();
     Set<FileScore> set = new TreeSet<FileScore>();
     double projectDuration = startTime - getEarliestCommit(map);
     for (Entry<String, List<RevisionInfo>> entry : map.entrySet()) {
-      if (!isFileIncluded(entry.getKey(), fileNameRegex)) {
+      if (!isFileIncluded(project, entry.getKey(), fileNameRegex)) {
         continue;
       }
       double score = 0.0;
@@ -108,13 +110,26 @@ public class DefectPredictionSensor implements Sensor {
   }
 
   /**
+   * @param project
    * @param fileName
    * @param regex
    * @return true if the supplied fileName is included in the results, false
    *         otherwise
    */
-  private boolean isFileIncluded(String fileName, String regex) {
-    return (StringUtils.isEmpty(regex) || fileName == null || fileName.matches(regex));
+  private boolean isFileIncluded(Project project, String fileName, String regex) {
+    boolean result = (StringUtils.isEmpty(regex) || fileName == null || fileName.matches(regex));
+    if (result && fileName != null) {
+      String[] exclusions = project.getExclusionPatterns();
+      if (exclusions != null) {
+        for (String exclusion : exclusions) {
+          if (fileName.matches(".*" + exclusion.replace("*", ".*"))) {
+            result = false;
+            break;
+          }
+        }
+      }
+    }
+    return result;
   }
 
   /**
@@ -225,6 +240,7 @@ public class DefectPredictionSensor implements Sensor {
    */
   private String getSourcePath(Project project) {
     String result = project.getFileSystem().getBasedir().getPath();
+    logger.info("Project basedir = \"" + result + "\"");
     if (result != null) {
       String subfolder = (String) project.getProperty(DefectPredictionPlugin.SOURCE_PATH);
       if (subfolder != null) {

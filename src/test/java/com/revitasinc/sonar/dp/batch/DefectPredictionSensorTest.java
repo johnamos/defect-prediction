@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.sonar.api.resources.Project;
 
 /**
  * 
@@ -38,7 +39,9 @@ public class DefectPredictionSensorTest {
         Arrays.asList(new RevisionInfo("jamos", buildDate(2012, 5, 1), "", 1),
             new RevisionInfo("jamos", buildDate(2012, 7, 1), "", 15)));
     MockSensorContext sensorContext = new MockSensorContext();
-    new DefectPredictionSensor().saveScores(map, sensorContext, 2.0, 1.0, 18.0, null, null);
+    Project project = new Project(null);
+    project.setConfiguration(new MockConfiguration());
+    new DefectPredictionSensor().saveScores(project, map, sensorContext, 2.0, 1.0, 18.0, null, null);
     assertEquals(3, sensorContext.getMeasures().size());
     Utils.writeMapContents(map);
   }
