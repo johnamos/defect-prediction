@@ -19,9 +19,12 @@
  */
 package com.revitasinc.sonar.dp.batch.parser;
 
+import org.apache.commons.lang.CharEncoding;
+
 import com.revitasinc.sonar.dp.batch.RevisionInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +78,7 @@ public class GitLogParser implements ScmLogParser {
       RevisionInfo revInfo = null;
       String author = null;
       Date date = null;
-      for (LineIterator iterator = IOUtils.lineIterator(inputStream, "UTF-8"); iterator.hasNext();) {
+      for (LineIterator iterator = IOUtils.lineIterator(inputStream, CharEncoding.UTF_8); iterator.hasNext();) {
         String line = iterator.nextLine();
         if (line.startsWith(AUTHOR)) {
           author = line.split(EMAIL_START)[0].substring(AUTHOR.length());
@@ -84,7 +87,7 @@ public class GitLogParser implements ScmLogParser {
         else if (line.startsWith(DATE)) {
           date = df.parse(line.substring(DATE.length()).trim());
         }
-        else if (!line.trim().isEmpty() && !line.startsWith(COMMIT)) {
+        else if (!StringUtils.isBlank(line) && !line.startsWith(COMMIT)) {
           if (revInfo == null) {
             revInfo = new RevisionInfo(author, date, line.trim(), 0);
             author = null;

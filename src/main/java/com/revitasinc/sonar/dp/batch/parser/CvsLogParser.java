@@ -19,6 +19,8 @@
  */
 package com.revitasinc.sonar.dp.batch.parser;
 
+import org.apache.commons.lang.CharEncoding;
+
 import com.revitasinc.sonar.dp.batch.RevisionInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
@@ -83,7 +85,7 @@ public class CvsLogParser implements ScmLogParser {
       boolean isRevision = false;
       List<RevisionInfo> revList = null;
       RevisionInfo revInfo = null;
-      for (LineIterator iterator = IOUtils.lineIterator(inputStream, "UTF-8"); iterator.hasNext();) {
+      for (LineIterator iterator = IOUtils.lineIterator(inputStream, CharEncoding.UTF_8); iterator.hasNext();) {
         String line = iterator.nextLine();
         if (line.startsWith(WORKING_FILE)) {
           currentFile = line.substring(WORKING_FILE.length());

@@ -19,6 +19,8 @@
  */
 package com.revitasinc.sonar.dp.batch.parser;
 
+import org.apache.commons.lang.CharEncoding;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +32,7 @@ import java.io.InputStreamReader;
 /**
  * Reads output streams from a process spawned using Runtime.exec(). From
  * http://www.javaworld.com/javaworld/jw-12-2000/jw-1229-traps.html?page=4.
- * 
+ *
  * @author John Amos (jamos@imany.com)
  */
 public class StreamGobbler implements Runnable {
@@ -52,7 +54,7 @@ public class StreamGobbler implements Runnable {
   public void run() {
     BufferedReader br = null;
     try {
-      br = new BufferedReader(new InputStreamReader(is));
+      br = new BufferedReader(new InputStreamReader(is, CharEncoding.UTF_8));
       String line = null;
       while ((line = br.readLine()) != null) {
         if (ERR.equals(type)) {

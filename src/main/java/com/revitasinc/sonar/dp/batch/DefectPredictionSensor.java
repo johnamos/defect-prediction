@@ -56,7 +56,7 @@ public class DefectPredictionSensor implements Sensor {
   public void analyse(Project project, SensorContext sensorContext) {
     try {
       String command = (String) project.getProperty(DefectPredictionPlugin.COMMAND);
-      if (command == null || command.isEmpty()) {
+      if (StringUtils.isBlank(command)) {
         logger.error("Please specify an SCM Command in Configuration > General Settings > Defect Prediction");
       }
       else {
