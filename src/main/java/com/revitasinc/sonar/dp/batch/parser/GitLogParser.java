@@ -12,7 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,7 +24,7 @@ import java.util.Map;
 
 /**
  * Extracts revision data from a Git log.
- * 
+ *
  * @author John Amos (jamos@revitasinc.com)
  */
 public class GitLogParser implements ScmLogParser {
@@ -71,21 +73,39 @@ public class GitLogParser implements ScmLogParser {
             author = null;
             date = null;
           }
-          else if (line.matches(FILE_LINE_REGEX)) {
-            String[] segs = line.split(TAB);
-            List<RevisionInfo> list = result.get(segs[2]);
-            if (list == null) {
-              list = new ArrayList<RevisionInfo>();
-              result.put(segs[2], list);
-            }
-            list.add(new RevisionInfo(revInfo.getAuthor(), revInfo.getDate(), revInfo.getComment(), Integer
-                .parseInt(segs[0])));
+          else {
+            processFileLine(line, revInfo, result);
           }
         }
       }
-    } catch (Exception e) {
+    } catch (NumberFormatException e) {
+      logger.error(EMPTY_STRING, e);
+    } catch (IOException e) {
+      logger.error(EMPTY_STRING, e);
+    } catch (ParseException e) {
       logger.error(EMPTY_STRING, e);
     }
     return result;
+  }
+
+  /**
+   * If the supplied line matches FILE_LINE_REGEX, then a new RevisionInfo is built using
+   * the data in the supplied RevisionInfo and then added to the supplied Map.
+   *
+   * @param line
+   * @param revInfo
+   * @param result
+   */
+  private void processFileLine(String line, RevisionInfo revInfo, Map<String, List<RevisionInfo>> result) {
+    if (line.matches(FILE_LINE_REGEX)) {
+      String[] segs = line.split(TAB);
+      List<RevisionInfo> list = result.get(segs[2]);
+      if (list == null) {
+        list = new ArrayList<RevisionInfo>();
+        result.put(segs[2], list);
+      }
+      list.add(new RevisionInfo(revInfo.getAuthor(), revInfo.getDate(), revInfo.getComment(), Integer
+          .parseInt(segs[0])));
+    }
   }
 }

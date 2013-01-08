@@ -17,12 +17,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Assigns a score to each source file in the project and collects scores for
  * those files most likely to contain more defects.
- * 
+ *
  * @author John Amos (jamos@revitasinc.com)
  */
 public class DefectPredictionSensor implements Sensor {
@@ -30,15 +29,12 @@ public class DefectPredictionSensor implements Sensor {
 
   private static Logger logger = LoggerFactory.getLogger(DefectPredictionSensor.class);
 
-  private static Map<String, Double> scoreMap;
-
   public boolean shouldExecuteOnProject(Project project) {
     // This sensor is executed on all projects
     return true;
   }
 
   public void analyse(Project project, SensorContext sensorContext) {
-    scoreMap = null;
     try {
       String command = (String) project.getProperty(DefectPredictionPlugin.COMMAND);
       if (command == null || command.isEmpty()) {
@@ -76,7 +72,7 @@ public class DefectPredictionSensor implements Sensor {
    * <p>
    * t = 1 - ((Time.now - fix.date).to_f / (Time.now - fixes.last.date)) <br>
    * hotspots[file] += 1/(1+Math.exp((-12*t)+12))
-   * 
+   *
    * @param project
    * @param map
    * @param sensorContext
@@ -108,7 +104,7 @@ public class DefectPredictionSensor implements Sensor {
       set.add(new FileScore(entry.getKey(), score));
     }
     set = normalizeScores(set);
-    buildScoreMap(set);
+    ScoreHolder.buildScoreMap(set);
     buildSortedMeasure(set, sensorContext);
   }
 
@@ -165,7 +161,7 @@ public class DefectPredictionSensor implements Sensor {
   /**
    * Normalizes the score for every file in the repository so that the top score
    * is TOP_SCORE.
-   * 
+   *
    * @param set
    * @return
    */
@@ -204,7 +200,7 @@ public class DefectPredictionSensor implements Sensor {
 
   /**
    * Saves one Measure for each of the top-scoring files.
-   * 
+   *
    * @param set
    * @param sensorContext
    */
@@ -220,26 +216,6 @@ public class DefectPredictionSensor implements Sensor {
       sensorContext.saveMeasure(new Measure(DefectPredictionMetrics.TOP_FILES_METRICS.get(i), value));
       i++;
     }
-  }
-
-  /**
-   * Builds a Map that can be used by the Decorator to assign a score to each
-   * file.
-   * 
-   * @param set
-   */
-  private void buildScoreMap(Set<FileScore> set) {
-    scoreMap = new ConcurrentHashMap<String, Double>();
-    for (FileScore score : set) {
-      scoreMap.put(score.getPath(), score.getScore());
-    }
-  }
-
-  /**
-   * @return the Map of scores
-   */
-  public static Map<String, Double> getScoreMap() {
-    return scoreMap;
   }
 
   /**

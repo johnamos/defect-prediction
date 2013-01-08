@@ -8,7 +8,7 @@ package com.revitasinc.sonar.dp.batch;
 import java.util.Date;
 
 /**
- * 
+ *
  * @author John Amos (jamos@revitasinc.com)
  */
 public class RevisionInfo {
@@ -23,7 +23,12 @@ public class RevisionInfo {
   public RevisionInfo(String author, Date date, String comment, int addedLineCount) {
     super();
     this.author = author;
-    this.date = date;
+    if (date != null) {
+      this.date = new Date(date.getTime());
+    }
+    else {
+      this.date = null;
+    }
     this.comment = comment;
     this.addedLineCount = addedLineCount;
   }
@@ -33,7 +38,11 @@ public class RevisionInfo {
   }
 
   public Date getDate() {
-    return date;
+    Date result = null;
+    if (date != null) {
+      result = new Date(date.getTime());
+    }
+    return result;
   }
 
   public String getComment() {
