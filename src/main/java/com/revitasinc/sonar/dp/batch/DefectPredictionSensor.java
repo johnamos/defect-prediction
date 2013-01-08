@@ -167,10 +167,16 @@ public class DefectPredictionSensor implements Sensor {
    * @return
    */
   private Set<FileScore> normalizeScores(Set<FileScore> set) {
-    double topRawScore = set.iterator().next().getScore();
     Set<FileScore> newSet = new TreeSet<FileScore>();
-    for (FileScore score : set) {
-      newSet.add(new FileScore(score.getPath(), (score.getScore() / topRawScore) * TOP_SCORE));
+    if (set != null && !set.isEmpty()) {
+      double topRawScore = set.iterator().next().getScore();
+      for (FileScore score : set) {
+        newSet.add(new FileScore(score.getPath(), (score.getScore() / topRawScore) * TOP_SCORE));
+      }
+    }
+    else {
+      logger.warn("There were no source files analyzed by " + getClass().getSimpleName()
+          + ".  You may need to change the Source Path in Configuration > General Settings > Defect Prediction.");
     }
     return newSet;
   }
