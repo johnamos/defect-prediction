@@ -42,18 +42,23 @@ public class DefectPredictionSensor implements Sensor {
     scoreMap = null;
     try {
       String command = (String) project.getProperty(DefectPredictionPlugin.COMMAND);
-      saveScores(
-          project,
-          ScmLogParserFactory.getParser(command).parse(new File(getSourcePath(project)), command),
-          sensorContext,
-          doubleFromProperty(project, DefectPredictionPlugin.AUTHOR_CHANGE_WEIGHT,
-              DefectPredictionPlugin.DEFAULT_AUTHOR_CHANGE_WEIGHT),
-          doubleFromProperty(project, DefectPredictionPlugin.LINES_CHANGED_WEIGHT,
-              DefectPredictionPlugin.DEFAULT_LINES_CHANGED_WEIGHT),
-          doubleFromProperty(project, DefectPredictionPlugin.TIME_DECAY_EXPONENT,
-              DefectPredictionPlugin.DEFAULT_TIME_DECAY_EXPONENT),
-          (String) project.getProperty(DefectPredictionPlugin.FILE_NAME_REGEX),
-          (String) project.getProperty(DefectPredictionPlugin.COMMENT_REGEX));
+      if (command == null || command.isEmpty()) {
+        logger.error("Please specify an SCM Command in Configuration > General Settings > Defect Prediction");
+      }
+      else {
+        saveScores(
+            project,
+            ScmLogParserFactory.getParser(command).parse(new File(getSourcePath(project)), command),
+            sensorContext,
+            doubleFromProperty(project, DefectPredictionPlugin.AUTHOR_CHANGE_WEIGHT,
+                DefectPredictionPlugin.DEFAULT_AUTHOR_CHANGE_WEIGHT),
+            doubleFromProperty(project, DefectPredictionPlugin.LINES_CHANGED_WEIGHT,
+                DefectPredictionPlugin.DEFAULT_LINES_CHANGED_WEIGHT),
+            doubleFromProperty(project, DefectPredictionPlugin.TIME_DECAY_EXPONENT,
+                DefectPredictionPlugin.DEFAULT_TIME_DECAY_EXPONENT),
+            (String) project.getProperty(DefectPredictionPlugin.FILE_NAME_REGEX),
+            (String) project.getProperty(DefectPredictionPlugin.COMMENT_REGEX));
+      }
     }
     catch (Exception e) {
       logger.error(e.getClass().getName() + " - " + e.getMessage(), e);
