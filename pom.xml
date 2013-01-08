@@ -2,13 +2,33 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.revitasinc.sonar.dp</groupId>
+  <parent>
+    <groupId>org.codehaus.sonar-plugins</groupId>
+    <artifactId>parent</artifactId>
+    <!-- The latest version can be found by looking at the tags starting with "parent-" in http://svn.codehaus.org/sonar-plugins/tags/ -->
+    <version>15</version>
+    <relativePath>../parent</relativePath>
+  </parent>
+
   <artifactId>sonar-defect-prediction-plugin</artifactId>
-  <packaging>sonar-plugin</packaging>
   <version>0.1-SNAPSHOT</version>
+  <packaging>sonar-plugin</packaging>
 
   <name>Defect Prediction Plugin</name>
   <description>Ranks and displays source files most likely to contain a higher defect count</description>
+  <url>http://revitasinc.com</url>
+  <inceptionYear>2013</inceptionYear>
+  <organization>
+    <name>Revitas, Inc.</name>
+    <url>http://revitasinc.com</url>
+  </organization>
+
+  <developers>
+    <developer>
+      <name>John D. Amos</name>
+      <email>jamos@revitasinc.com</email>
+    </developer>
+  </developers>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,13 +37,6 @@
     <sonar.pluginName>Defect Prediction</sonar.pluginName>
     <sonar.pluginClass>com.revitasinc.sonar.dp.DefectPredictionPlugin</sonar.pluginClass>
   </properties>
- 
-  <repositories>
-    <repository>
-      <id>sonarsource</id>
-      <url>http://repository.sonarsource.org/content/repositories/sonar</url>
-    </repository>
-  </repositories>
 
   <dependencies>
     <dependency>
@@ -41,6 +54,13 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>sonarsource</id>
+      <url>http://repository.sonarsource.org/content/repositories/sonar</url>
+    </repository>
+  </repositories>
 
   <build>
     <plugins>
@@ -75,7 +95,7 @@
     </plugins>
     <pluginManagement>
       <plugins>
-        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
@@ -103,6 +123,19 @@
                     <versionRange>[1.0-beta-1,)</versionRange>
                     <goals>
                       <goal>native2ascii</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>com.mycila.maven-license-plugin</groupId>
+                    <artifactId>maven-license-plugin</artifactId>
+                    <versionRange>[1.9.0,)</versionRange>
+                    <goals>
+                      <goal>check</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
