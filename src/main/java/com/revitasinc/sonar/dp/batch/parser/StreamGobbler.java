@@ -5,13 +5,13 @@
 
 package com.revitasinc.sonar.dp.batch.parser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Reads output streams from a process spawned using Runtime.exec(). From
@@ -48,16 +48,13 @@ public class StreamGobbler implements Runnable {
           logger.debug(line);
         }
       }
-    }
-    catch (IOException ioe) {
+    } catch (IOException ioe) {
       logger.error("", ioe);
-    }
-    finally {
+    } finally {
       if (br != null) {
         try {
           br.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           logger.error("", e);
         }
       }

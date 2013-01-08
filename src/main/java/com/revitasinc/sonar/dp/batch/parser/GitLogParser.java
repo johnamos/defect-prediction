@@ -5,6 +5,12 @@
 
 package com.revitasinc.sonar.dp.batch.parser;
 
+import com.revitasinc.sonar.dp.batch.RevisionInfo;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,13 +19,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.LineIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.revitasinc.sonar.dp.batch.RevisionInfo;
 
 /**
  * Extracts revision data from a Git log.
@@ -84,8 +83,7 @@ public class GitLogParser implements ScmLogParser {
           }
         }
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logger.error(EMPTY_STRING, e);
     }
     return result;

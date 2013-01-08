@@ -5,7 +5,8 @@
 
 package com.revitasinc.sonar.dp.batch;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.sonar.api.resources.Project;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -14,8 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-import org.sonar.api.resources.Project;
+import static org.junit.Assert.assertEquals;
 
 /**
  * 

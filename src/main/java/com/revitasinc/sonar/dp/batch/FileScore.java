@@ -21,14 +21,14 @@ public class FileScore implements Comparable<FileScore> {
   }
 
   public int compareTo(FileScore o) {
-    if (score < ((FileScore) o).score) {
+    if (score < o.score) {
       return 1;
     }
-    else if (score > ((FileScore) o).score) {
+    else if (score > o.score) {
       return -1;
     }
     else {
-      return path.compareTo(((FileScore) o).path);
+      return path.compareTo(o.path);
     }
   }
 

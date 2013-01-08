@@ -1,7 +1,6 @@
 package com.revitasinc.sonar.dp.batch;
 
-import java.io.File;
-
+import com.revitasinc.sonar.dp.DefectPredictionMetrics;
 import org.sonar.api.batch.Decorator;
 import org.sonar.api.batch.DecoratorContext;
 import org.sonar.api.measures.MeasureUtils;
@@ -9,7 +8,7 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Resource;
 import org.sonar.api.resources.Scopes;
 
-import com.revitasinc.sonar.dp.DefectPredictionMetrics;
+import java.io.File;
 
 /**
  * Sets the score on each resource and sums the scores at higher levels.

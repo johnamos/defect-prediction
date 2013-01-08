@@ -1,13 +1,8 @@
 package com.revitasinc.sonar.dp.batch;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.revitasinc.sonar.dp.DefectPredictionMetrics;
+import com.revitasinc.sonar.dp.DefectPredictionPlugin;
+import com.revitasinc.sonar.dp.batch.parser.ScmLogParserFactory;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +11,13 @@ import org.sonar.api.batch.SensorContext;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.resources.Project;
 
-import com.revitasinc.sonar.dp.DefectPredictionMetrics;
-import com.revitasinc.sonar.dp.DefectPredictionPlugin;
-import com.revitasinc.sonar.dp.batch.parser.ScmLogParserFactory;
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Assigns a score to each source file in the project and collects scores for
@@ -59,8 +58,7 @@ public class DefectPredictionSensor implements Sensor {
             (String) project.getProperty(DefectPredictionPlugin.FILE_NAME_REGEX),
             (String) project.getProperty(DefectPredictionPlugin.COMMENT_REGEX));
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logger.error(e.getClass().getName() + " - " + e.getMessage(), e);
     }
   }
@@ -103,7 +101,7 @@ public class DefectPredictionSensor implements Sensor {
               : 1.0;
           double ti = 1.0 - ((startTime - revision.getDate().getTime()) / projectDuration);
           score += authorChange * (lineWeight * revision.getAddedLineCount())
-              / (1 + Math.exp((-timeDecay * ti) + timeDecay));
+            / (1 + Math.exp((-timeDecay * ti) + timeDecay));
           lastAuthor = revision.getAuthor();
         }
       }
@@ -144,7 +142,7 @@ public class DefectPredictionSensor implements Sensor {
    */
   private boolean isRevisionIncluded(RevisionInfo revision, String commentRegex) {
     return revision.getAuthor() != null
-        && (commentRegex == null || revision.getComment() == null || revision.getComment().matches(commentRegex));
+      && (commentRegex == null || revision.getComment() == null || revision.getComment().matches(commentRegex));
   }
 
   /**
@@ -181,7 +179,7 @@ public class DefectPredictionSensor implements Sensor {
     }
     else {
       logger.warn("There were no source files analyzed by " + getClass().getSimpleName()
-          + ".  You may need to change the Source Path in Configuration > General Settings > Defect Prediction.");
+        + ".  You may need to change the Source Path in Configuration > General Settings > Defect Prediction.");
     }
     return newSet;
   }
@@ -196,11 +194,10 @@ public class DefectPredictionSensor implements Sensor {
     double result = Double.parseDouble(defaultValue);
     try {
       result = Double.parseDouble((String) project.getProperty(key));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logger.warn("The property \"" + key
-          + "\" is not set to a valid number in Configuration > System > General Settings > "
-          + DefectPredictionPlugin.PLUGIN_NAME + ".  Using " + defaultValue + " instead.");
+        + "\" is not set to a valid number in Configuration > System > General Settings > "
+        + DefectPredictionPlugin.PLUGIN_NAME + ".  Using " + defaultValue + " instead.");
     }
     return result;
   }
@@ -218,7 +215,7 @@ public class DefectPredictionSensor implements Sensor {
         break;
       }
       String value = String.format("%.2f", score.getScore()) + "#"
-          + score.getPath().substring(score.getPath().lastIndexOf('/') + 1);
+        + score.getPath().substring(score.getPath().lastIndexOf('/') + 1);
       logger.debug("Top defects measure value: \"" + value + "\"");
       sensorContext.saveMeasure(new Measure(DefectPredictionMetrics.TOP_FILES_METRICS.get(i), value));
       i++;

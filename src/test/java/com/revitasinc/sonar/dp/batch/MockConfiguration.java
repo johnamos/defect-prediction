@@ -1,4 +1,3 @@
-
 /**
  * Copyright
  * © 2012 Revitas, Inc. ALL RIGHTS RESERVED.
@@ -6,13 +5,13 @@
 
 package com.revitasinc.sonar.dp.batch;
 
+import org.apache.commons.configuration.Configuration;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-
-import org.apache.commons.configuration.Configuration;
 
 public class MockConfiguration implements Configuration {
 

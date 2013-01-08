@@ -5,12 +5,6 @@
 
 package com.revitasinc.sonar.dp.batch;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import org.sonar.api.batch.Event;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.design.Dependency;
@@ -20,6 +14,12 @@ import org.sonar.api.measures.Metric;
 import org.sonar.api.resources.ProjectLink;
 import org.sonar.api.resources.Resource;
 import org.sonar.api.rules.Violation;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * For unit testing.
@@ -75,7 +75,7 @@ public class MockSensorContext implements SensorContext {
     // TODO Auto-generated method stub
     return null;
   }
-  
+
   public List<Measure> getMeasures() {
     return measures;
   }

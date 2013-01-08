@@ -5,6 +5,12 @@
 
 package com.revitasinc.sonar.dp.batch.parser;
 
+import com.revitasinc.sonar.dp.batch.RevisionInfo;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -15,13 +21,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.LineIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.revitasinc.sonar.dp.batch.RevisionInfo;
 
 /**
  * Extracts revision data from a CVS log.
@@ -91,8 +90,7 @@ public class CvsLogParser implements ScmLogParser {
           }
         }
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       logger.error(EMPTY_STRING, e);
     }
     return result;
@@ -157,8 +155,7 @@ public class CvsLogParser implements ScmLogParser {
         }
       }
       result = new RevisionInfo(author, date, EMPTY_STRING, lineCount);
-    }
-    catch (ParseException e) {
+    } catch (ParseException e) {
       logger.error(EMPTY_STRING, e);
     }
     return result;

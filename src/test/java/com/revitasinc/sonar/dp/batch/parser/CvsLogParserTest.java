@@ -5,16 +5,15 @@
 
 package com.revitasinc.sonar.dp.batch.parser;
 
-import static org.junit.Assert.assertNotNull;
+import com.revitasinc.sonar.dp.batch.RevisionInfo;
+import com.revitasinc.sonar.dp.batch.Utils;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
-import com.revitasinc.sonar.dp.batch.RevisionInfo;
-import com.revitasinc.sonar.dp.batch.Utils;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * 
