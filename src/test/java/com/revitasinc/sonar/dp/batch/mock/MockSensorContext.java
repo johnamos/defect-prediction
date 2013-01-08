@@ -3,7 +3,7 @@
  * © 2012 Revitas, Inc. ALL RIGHTS RESERVED.
  */
 
-package com.revitasinc.sonar.dp.batch;
+package com.revitasinc.sonar.dp.batch.mock;
 
 import org.sonar.api.batch.Event;
 import org.sonar.api.batch.SensorContext;

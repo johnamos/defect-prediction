@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,7 +25,7 @@ import java.util.Map;
 
 /**
  * Extracts revision data from a CVS log.
- * 
+ *
  * @author John Amos (jamos@revitasinc.com)
  */
 public class CvsLogParser implements ScmLogParser {
@@ -57,6 +58,10 @@ public class CvsLogParser implements ScmLogParser {
   }
 
   public Map<String, List<RevisionInfo>> parse(File workingDir, String command) {
+    return parse(ParserHelper.getLogStream(workingDir, command));
+  }
+
+  public Map<String, List<RevisionInfo>> parse(InputStream inputStream) {
     Map<String, List<RevisionInfo>> result = new HashMap<String, List<RevisionInfo>>();
     DateFormat df = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
     try {
@@ -64,9 +69,7 @@ public class CvsLogParser implements ScmLogParser {
       boolean isRevision = false;
       List<RevisionInfo> revList = null;
       RevisionInfo revInfo = null;
-      Process process = new ProcessBuilder(command.split(SPACE)).directory(workingDir).start();
-      new Thread(new StreamGobbler(process.getErrorStream(), StreamGobbler.ERR)).start();
-      for (LineIterator iterator = IOUtils.lineIterator(process.getInputStream(), "UTF-8"); iterator.hasNext();) {
+      for (LineIterator iterator = IOUtils.lineIterator(inputStream, "UTF-8"); iterator.hasNext();) {
         String line = iterator.nextLine();
         if (line.startsWith(WORKING_FILE)) {
           currentFile = line.substring(WORKING_FILE.length());
@@ -117,7 +120,7 @@ public class CvsLogParser implements ScmLogParser {
   /**
    * Puts the supplied revList into the supplied Map using the supplied
    * currentFile as the key in the Map.
-   * 
+   *
    * @param result
    * @param currentFile
    * @param revList
@@ -130,7 +133,7 @@ public class CvsLogParser implements ScmLogParser {
 
   /**
    * Builds a RevisionInfo object from the supplied line.
-   * 
+   *
    * @param line
    * @param df
    * @return

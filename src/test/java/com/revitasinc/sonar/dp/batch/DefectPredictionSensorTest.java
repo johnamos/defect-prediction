@@ -5,6 +5,8 @@
 
 package com.revitasinc.sonar.dp.batch;
 
+import com.revitasinc.sonar.dp.batch.mock.MockConfiguration;
+import com.revitasinc.sonar.dp.batch.mock.MockSensorContext;
 import org.junit.Test;
 import org.sonar.api.resources.Project;
 
@@ -18,7 +20,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 /**
- * 
+ *
  * @author John Amos (jamos@revitasinc.com)
  */
 public class DefectPredictionSensorTest {
@@ -27,15 +29,15 @@ public class DefectPredictionSensorTest {
   public void testSaveScores() {
     Map<String, List<RevisionInfo>> map = new HashMap<String, List<RevisionInfo>>();
     map.put(
-        "somepath/somefile1.java",
+        "src/com/mycompany/module/Somefile1.java",
         Arrays.asList(new RevisionInfo("jamos", buildDate(2012, 1, 1), "", 1),
             new RevisionInfo("jamos", buildDate(2012, 3, 1), "", 15)));
     map.put(
-        "somepath/somefile2.java",
+        "src/com/mycompany/module/Somefile2.java",
         Arrays.asList(new RevisionInfo("jamos", buildDate(2012, 4, 1), "", 1),
             new RevisionInfo("jamos", buildDate(2012, 6, 1), "", 15)));
     map.put(
-        "somepath/somefile3.java",
+        "src/com/mycompany/module/Somefile3.java",
         Arrays.asList(new RevisionInfo("jamos", buildDate(2012, 5, 1), "", 1),
             new RevisionInfo("jamos", buildDate(2012, 7, 1), "", 15)));
     MockSensorContext sensorContext = new MockSensorContext();

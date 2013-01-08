@@ -1,0 +1,146 @@
+commit 2c4ed032018a876438218870fa1a887887eb65e4
+Author: John Amos <jamos@revitasinc.com>
+Date:   Mon Jan 7 20:26:02 2013 -0800
+
+    Fix problems found by FindBugs
+
+5	5	src/main/java/com/revitasinc/sonar/dp/batch/DefectPredictionDecorator.java
+5	29	src/main/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensor.java
+60	51	src/main/java/com/revitasinc/sonar/dp/batch/RevisionInfo.java
+43	0	src/main/java/com/revitasinc/sonar/dp/batch/ScoreHolder.java
+31	11	src/main/java/com/revitasinc/sonar/dp/batch/parser/GitLogParser.java
+
+commit 90bf6420b3d99966978635b8f61480569e0e8d83
+Author: John Amos <jamos@revitasinc.com>
+Date:   Mon Jan 7 16:37:32 2013 -0800
+
+    Apply Sonar standard formatting, cleanup, and import organization from http://docs.codehaus.org/display/SONAR/How+to+Build
+
+39	39	src/main/java/com/revitasinc/sonar/dp/DefectPredictionMetrics.java
+21	16	src/main/java/com/revitasinc/sonar/dp/DefectPredictionPlugin.java
+74	75	src/main/java/com/revitasinc/sonar/dp/batch/DefectPredictionDecorator.java
+18	21	src/main/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensor.java
+57	57	src/main/java/com/revitasinc/sonar/dp/batch/FileScore.java
+163	166	src/main/java/com/revitasinc/sonar/dp/batch/parser/CvsLogParser.java
+91	93	src/main/java/com/revitasinc/sonar/dp/batch/parser/GitLogParser.java
+33	33	src/main/java/com/revitasinc/sonar/dp/batch/parser/ScmLogParser.java
+45	45	src/main/java/com/revitasinc/sonar/dp/batch/parser/ScmLogParserFactory.java
+64	67	src/main/java/com/revitasinc/sonar/dp/batch/parser/StreamGobbler.java
+38	39	src/main/java/com/revitasinc/sonar/dp/ui/DefectPredictionRubyWidget.java
+62	62	src/test/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensorTest.java
+223	224	src/test/java/com/revitasinc/sonar/dp/batch/MockConfiguration.java
+184	184	src/test/java/com/revitasinc/sonar/dp/batch/MockSensorContext.java
+33	34	src/test/java/com/revitasinc/sonar/dp/batch/parser/CvsLogParserTest.java
+
+commit 4f23fd46819b627a5452d6ba4c20498fe61d5920
+Author: John Amos <jamos@revitasinc.com>
+Date:   Mon Jan 7 16:25:21 2013 -0800
+
+    Write a user-friendly error to the log to avoid a NullPointerException
+
+17	12	src/main/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensor.java
+
+commit 4b7de6be25e8ef7fdfe274e35bed3425a303e7e2
+Author: John Amos <jamos@revitasinc.com>
+Date:   Mon Jan 7 16:01:10 2013 -0800
+
+    Catch and report empty results
+
+9	3	src/main/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensor.java
+
+commit dadc6b78aaca82e8bde3a142075899873f7d0ebb
+Author: John Amos <jamos@revitasinc.com>
+Date:   Fri Jan 4 12:55:59 2013 -0800
+
+    Honor project exclusions
+
+21	5	src/main/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensor.java
+4	1	src/test/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensorTest.java
+224	0	src/test/java/com/revitasinc/sonar/dp/batch/MockConfiguration.java
+
+commit b49007f900c8f16540dfd103461ee97c8bd17f48
+Author: unknown <jamos@jamos12408.imany.com>
+Date:   Wed Jan 2 21:26:55 2013 -0800
+
+    Fixed problem with source paths
+
+36	6	src/main/java/com/revitasinc/sonar/dp/batch/DefectPredictionDecorator.java
+
+commit 99dd5affded310f8f945711532c5dfefc9c91546
+Author: jamos <jamos@jamos12408.imany.com>
+Date:   Wed Jan 2 16:11:03 2013 -0800
+
+    Indicate in property name whether it is required or optional
+
+63	63	src/main/java/com/revitasinc/sonar/dp/DefectPredictionPlugin.java
+
+commit 543bc1917c97aea7471a65cc16f60d0e6ce15ad4
+Author: John Amos <jamos@revitasinc.com>
+Date:   Wed Dec 26 16:17:03 2012 -0800
+
+    Added parser factor to get the correct SCM parser for a command
+
+11	5	src/main/java/com/revitasinc/sonar/dp/DefectPredictionPlugin.java
+31	5	src/main/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensor.java
+37	7	src/main/java/com/revitasinc/sonar/dp/batch/parser/CvsLogParser.java
+2	2	src/main/java/com/revitasinc/sonar/dp/batch/parser/GitLogParser.java
+45	0	src/main/java/com/revitasinc/sonar/dp/batch/parser/ScmLogParserFactory.java
+1	1	src/test/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensorTest.java
+
+commit d4ee956db659ecb880d74de30b99dd57337bdd2f
+Author: John Amos <jamos@revitasinc.com>
+Date:   Fri Dec 21 22:14:29 2012 -0800
+
+    Add git log parser
+
+93	0	src/main/java/com/revitasinc/sonar/dp/batch/parser/GitLogParser.java
+
+commit 6b0c6b28483be3bbfa5d0d38b410937c24f1a559
+Author: John Amos <jamos@revitasinc.com>
+Date:   Fri Dec 21 16:27:48 2012 -0800
+
+    Everything works but there is a problem with the scores
+
+0	5	pom.xml
+4	4	src/main/java/com/revitasinc/sonar/dp/DefectPredictionPlugin.java
+70	136	src/main/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensor.java
+51	0	src/main/java/com/revitasinc/sonar/dp/batch/RevisionInfo.java
+136	0	src/main/java/com/revitasinc/sonar/dp/batch/parser/CvsLogParser.java
+33	0	src/main/java/com/revitasinc/sonar/dp/batch/parser/ScmLogParser.java
+67	0	src/main/java/com/revitasinc/sonar/dp/batch/parser/StreamGobbler.java
+0	41	src/test/java/com/mycompany/sonar/reference/batch/DefectPredictionSensorTest.java
+0	176	src/test/java/com/mycompany/sonar/reference/batch/MockSensorContext.java
+39	19	src/test/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensorTest.java
+10	2	src/test/java/com/revitasinc/sonar/dp/batch/MockSensorContext.java
+30	0	src/test/java/com/revitasinc/sonar/dp/batch/Utils.java
+34	0	src/test/java/com/revitasinc/sonar/dp/batch/parser/CvsLogParserTest.java
+
+commit fac2387f932ed3bfec9ff3a6eebbb410b957e691
+Author: John Amos <jamos@revitasinc.com>
+Date:   Mon Dec 17 15:28:19 2012 -0800
+
+    Correct paths
+
+1	1	src/main/java/com/revitasinc/sonar/dp/ui/DefectPredictionRubyWidget.java
+39	0	src/test/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensorTest.java
+176	0	src/test/java/com/revitasinc/sonar/dp/batch/MockSensorContext.java
+
+commit 4257dba18ba3be3ff84087a4ac8255742a87614c
+Author: John Amos <jamos@revitasinc.com>
+Date:   Mon Dec 17 14:01:37 2012 -0800
+
+    Works with a CVS log file created in a specified folder
+
+35	0	.gitignore
+125	0	pom.xml
+39	0	src/main/java/com/revitasinc/sonar/dp/DefectPredictionMetrics.java
+58	0	src/main/java/com/revitasinc/sonar/dp/DefectPredictionPlugin.java
+45	0	src/main/java/com/revitasinc/sonar/dp/batch/DefectPredictionDecorator.java
+282	0	src/main/java/com/revitasinc/sonar/dp/batch/DefectPredictionSensor.java
+57	0	src/main/java/com/revitasinc/sonar/dp/batch/FileScore.java
+39	0	src/main/java/com/revitasinc/sonar/dp/ui/DefectPredictionRubyWidget.java
+30	0	src/main/resources/dp/dp_widget.html.erb
+9	0	src/main/resources/org/sonar/l10n/dp.properties
+5	0	src/main/resources/org/sonar/l10n/dp_fr.properties
+41	0	src/test/java/com/mycompany/sonar/reference/batch/DefectPredictionSensorTest.java
+176	0	src/test/java/com/mycompany/sonar/reference/batch/MockSensorContext.java

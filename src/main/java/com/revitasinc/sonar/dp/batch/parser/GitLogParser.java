@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,6 +50,10 @@ public class GitLogParser implements ScmLogParser {
   }
 
   public Map<String, List<RevisionInfo>> parse(File workingDir, String command) {
+    return parse(ParserHelper.getLogStream(workingDir, command));
+  }
+
+  public Map<String, List<RevisionInfo>> parse(InputStream inputStream) {
     Map<String, List<RevisionInfo>> result = new HashMap<String, List<RevisionInfo>>();
     // Wed May 2 15:24:20 2012 -0700
     DateFormat df = new SimpleDateFormat("EEE MMM dd hh:mm:ss yyyy");
@@ -56,9 +61,7 @@ public class GitLogParser implements ScmLogParser {
       RevisionInfo revInfo = null;
       String author = null;
       Date date = null;
-      Process process = new ProcessBuilder(command.split(" ")).directory(workingDir).start();
-      new Thread(new StreamGobbler(process.getErrorStream(), StreamGobbler.ERR)).start();
-      for (LineIterator iterator = IOUtils.lineIterator(process.getInputStream(), "UTF-8"); iterator.hasNext();) {
+      for (LineIterator iterator = IOUtils.lineIterator(inputStream, "UTF-8"); iterator.hasNext();) {
         String line = iterator.nextLine();
         if (line.startsWith(AUTHOR)) {
           author = line.split(EMAIL_START)[0].substring(AUTHOR.length());

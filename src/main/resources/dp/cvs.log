@@ -1,0 +1,107 @@
+
+RCS file: /cvsroot/project/main/src/com/mycompany/project/module/ModuleHelper.java,v
+Working file: com/mycompany/project/module/ModuleHelper.java
+head: 1.6
+branch:
+locks: strict
+access list:
+symbolic names:
+  v7-5-1_SP3_HF14_QAB3: 1.6
+  v7-5-1_SP3_HF14_QAB2: 1.6
+keyword substitution: kv
+total revisions: 7;	selected revisions: 6
+description:
+----------------------------
+revision 1.6
+date: 2007/09/11 01:21:27;  author: mprudnikov;  state: Exp;  lines: +1 -1
+updates to baseline worksheet
+----------------------------
+revision 1.5
+date: 2007/05/25 01:17:48;  author: mprudnikov;  state: Exp;  lines: +8 -0
+branches:  1.5.6;
+DEFECT-3393
+----------------------------
+revision 1.4
+date: 2007/05/15 23:36:34;  author: mprudnikov;  state: Exp;  lines: +15 -0
+DEFECT-3393
+----------------------------
+revision 1.3
+date: 2007/05/09 01:38:51;  author: mprudnikov;  state: Exp;  lines: +11 -8
+refactored mechanism :
+switched to id instead of non-unique abbreviation
+allowed multiple secondary types
+added filtering by obsolete key to errors popup
+----------------------------
+revision 1.2
+date: 2007/04/24 20:37:06;  author: mprudnikov;  state: Exp;  lines: +9 -7
+Service
+----------------------------
+revision 1.1
+date: 2007/04/24 00:53:55;  author: mprudnikov;  state: Exp;
+draft of service
+=============================================================================
+
+RCS file: /cvsroot/project/main/src/com/mycompany/project/module/ModuleManager.java,v
+Working file: com/mycompany/project/module/ModuleManager.java
+head: 1.12
+branch:
+locks: strict
+access list:
+symbolic names:
+  v7-5-1_SP3_HF14_QAB3: 1.12
+  v7-5-1_SP3_HF14_QAB2: 1.12
+keyword substitution: kv
+total revisions: 16;	selected revisions: 12
+description:
+----------------------------
+revision 1.12
+date: 2010/05/12 11:16:30;  author: szimirau;  state: Exp;  lines: +5 -5
+DEFECT-13215
+----------------------------
+revision 1.11
+date: 2010/04/17 11:54:11;  author: vkalanchuk;  state: Exp;  lines: +2 -1
+DEFECT-12828
+----------------------------
+revision 1.10
+date: 2009/09/24 14:28:20;  author: mramanchyk;  state: Exp;  lines: +10 -0
+DEFECT-10239
+----------------------------
+revision 1.9
+date: 2009/04/14 08:11:10;  author: szimirau;  state: Exp;  lines: +17 -0
+DEFECT-9442
+----------------------------
+revision 1.8
+date: 2008/10/15 22:11:51;  author: jamos;  state: Exp;  lines: +1 -3
+DEFECT-63  Commit transactions that result in user-defined Oracle error codes and return a ResultContext that contains the error message.
+----------------------------
+revision 1.7
+date: 2008/01/10 22:36:52;  author: jamos;  state: Exp;  lines: +0 -13
+branches:  1.7.16;  1.7.22;
+DEFECT-6197  Change methods for getting a Hibernate session factory, and use the same Hibernate session factory for JDBC and Hibernate operations.
+----------------------------
+revision 1.6
+date: 2007/07/31 22:07:28;  author: jamos;  state: Exp;  lines: +30 -40
+branches:  1.6.22;
+Service support for the import errors tab.
+----------------------------
+revision 1.5
+date: 2007/07/10 02:46:08;  author: mprudnikov;  state: Exp;  lines: +8 -0
+draft of resubmission support
+----------------------------
+revision 1.4
+date: 2007/05/03 02:26:11;  author: mprudnikov;  state: Exp;  lines: +8 -4
+added search method which takes additional parameter
+----------------------------
+revision 1.3
+date: 2007/04/24 23:58:22;  author: mprudnikov;  state: Exp;  lines: +28 -1
+completed mappings
+----------------------------
+revision 1.2
+date: 2007/04/24 20:37:06;  author: mprudnikov;  state: Exp;  lines: +4 -15
+ModuleService
+----------------------------
+revision 1.1
+date: 2007/04/24 00:53:55;  author: mprudnikov;  state: Exp;
+draft of item service
+
+=============================================================================

@@ -15,17 +15,14 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- *
- * @author John Amos (jamos@revitasinc.com)
- */
-public class CvsLogParserTest {
+public class GitLogParserTest {
 
   @Test
   public void testParse() {
-    Map<String, List<RevisionInfo>> map = new CvsLogParser().parse(getClass().getResourceAsStream("/dp/cvs.log"));
+    Map<String, List<RevisionInfo>> map = new GitLogParser().parse(getClass().getResourceAsStream("/dp/git.log"));
     assertNotNull(map);
-    assertEquals(2, map.size());
+    assertEquals(25, map.size());
     Utils.writeMapContents(map);
   }
+
 }
