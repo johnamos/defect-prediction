@@ -19,11 +19,10 @@
  */
 package com.revitasinc.sonar.dp.batch.parser;
 
-import org.apache.commons.lang.CharEncoding;
-
 import com.revitasinc.sonar.dp.batch.RevisionInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

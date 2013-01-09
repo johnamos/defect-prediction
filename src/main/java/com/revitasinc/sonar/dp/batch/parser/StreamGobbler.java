@@ -20,7 +20,6 @@
 package com.revitasinc.sonar.dp.batch.parser;
 
 import org.apache.commons.lang.CharEncoding;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
