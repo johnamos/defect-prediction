@@ -1,9 +1,9 @@
 <div class="dashbox">
-  <h3>Defect Prediction</h3>
-  <p><span class="big"><%= format_measure('defect_prediction', :url => url_for_drilldown('defect_prediction')) -%></span>&nbsp;(sum of all scores)</p>
-  Source files with the highest probability of defects
+  <h3><%= message('dp.title') -%></h3>
+  <p><span class="big"><%= format_measure('defect_prediction', :url => url_for_drilldown('defect_prediction')) -%></span>&nbsp;(<%= message('dp.sum.of.scores') -%>)</p>
+  <%= message('dp.chart.header') -%>
   <p>
-    <% 
+    <%
        fileCount = widget_properties['fileCount']
        if fileCount > 10
          fileCount = 10
@@ -12,17 +12,17 @@
        s << widget_properties['width'].to_s
        s << 'x'
        s << widget_properties['height'].to_s
-       s << '&chd=t:' 
+       s << '&chd=t:'
        for i in 1..fileCount
-         if i > 1 
-           s << "," 
-         end 
-         s << measure("top_defects_#{i}").data.split("#")[0] 
-       end 
-       s << '&chxt=x,y&chxl=1:' 
+         if i > 1
+           s << ","
+         end
+         s << measure("top_defects_#{i}").data.split("#")[0]
+       end
+       s << '&chxt=x,y&chxl=1:'
        for i in fileCount.downto(1)
-         s << "|" + measure("top_defects_#{i}").data.split("#")[1] 
-       end 
+         s << "|" + measure("top_defects_#{i}").data.split("#")[1]
+       end
        s << "|0:|"
     %>
     <%= gchart(s) -%>
