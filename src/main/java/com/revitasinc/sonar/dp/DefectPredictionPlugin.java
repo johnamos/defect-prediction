@@ -31,23 +31,63 @@ import java.util.List;
 
 /**
  * This class is the entry point for all Sonar extensions.
- * 
+ *
  * @author John Amos (jamos@revitasinc.com)
  */
 @Properties({
-  @Property(key = DefectPredictionPlugin.COMMENT_REGEX, name = "Comment Regex (Optional)",
-    description = "A regular expression (Java style) for including revisions by commit comment"),
-  @Property(key = DefectPredictionPlugin.FILE_NAME_REGEX, name = "File Name Regex (Optional)", description = "A regular expression (Java style) for file names to include"),
-  @Property(key = DefectPredictionPlugin.COMMAND, name = "SCM Command (Required)",
-    description = "The command to run on this system to generate a log file from your source code management system"),
-  @Property(key = DefectPredictionPlugin.SOURCE_PATH, name = "Source Path (Optional)",
-    description = "Path to the root folder of the source code, either absolute or relative to the project path"),
-  @Property(key = DefectPredictionPlugin.AUTHOR_CHANGE_WEIGHT, name = "Author Change Weight (Optional)", description = "The multiplier for a change of authors between revisions",
-    defaultValue = DefectPredictionPlugin.DEFAULT_AUTHOR_CHANGE_WEIGHT),
-  @Property(key = DefectPredictionPlugin.LINES_CHANGED_WEIGHT, name = "Lines Changed Weight (Optional)",
-    description = "The multiplier for the number of lines added or changed in a revision", defaultValue = DefectPredictionPlugin.DEFAULT_LINES_CHANGED_WEIGHT),
-  @Property(key = DefectPredictionPlugin.TIME_DECAY_EXPONENT, name = "Time Decay Exponent (Optional)",
-    description = "Used in the formula exp(-xt+x) where x is this value and t is the normalized time", defaultValue = DefectPredictionPlugin.DEFAULT_TIME_DECAY_EXPONENT)})
+  @Property(
+    key = DefectPredictionPlugin.COMMENT_REGEX,
+    name = "Comment Regex (Optional)",
+    description = "A regular expression (Java style) for including revisions by commit comment",
+    global = true,
+    module = true,
+    project = true),
+  @Property(
+    key = DefectPredictionPlugin.FILE_NAME_REGEX,
+    name = "File Name Regex (Optional)",
+    description = "A regular expression (Java style) for file names to include",
+    global = true,
+    module = true,
+    project = true),
+  @Property(
+    key = DefectPredictionPlugin.COMMAND,
+    name = "SCM Command (Required)",
+    description = "The command to run on this system to generate a log file from your source code management system",
+    global = true,
+    module = true,
+    project = true),
+  @Property(
+    key = DefectPredictionPlugin.SOURCE_PATH,
+    name = "Source Path (Optional)",
+    description = "Path to the root folder of the source code, either absolute or relative to the project path",
+    global = true,
+    module = true,
+    project = true),
+  @Property(
+    key = DefectPredictionPlugin.AUTHOR_CHANGE_WEIGHT,
+    name = "Author Change Weight (Optional)",
+    description = "The multiplier for a change of authors between revisions",
+    defaultValue = DefectPredictionPlugin.DEFAULT_AUTHOR_CHANGE_WEIGHT,
+    global = true,
+    module = true,
+    project = true),
+  @Property(
+    key = DefectPredictionPlugin.LINES_CHANGED_WEIGHT,
+    name = "Lines Changed Weight (Optional)",
+    description = "The multiplier for the number of lines added or changed in a revision",
+    defaultValue = DefectPredictionPlugin.DEFAULT_LINES_CHANGED_WEIGHT,
+    global = true,
+    module = true,
+    project = true),
+  @Property(
+    key = DefectPredictionPlugin.TIME_DECAY_EXPONENT,
+    name = "Time Decay Exponent (Optional)",
+    description = "Used in the formula exp(-xt+x) where x is this value and t is the normalized time",
+    defaultValue = DefectPredictionPlugin.DEFAULT_TIME_DECAY_EXPONENT,
+    global = true,
+    module = true,
+    project = true
+  )})
 public final class DefectPredictionPlugin extends SonarPlugin {
 
   public static final String PLUGIN_NAME = "Defect Prediction";
