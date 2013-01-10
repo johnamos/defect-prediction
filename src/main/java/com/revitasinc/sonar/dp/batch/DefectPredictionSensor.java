@@ -207,12 +207,15 @@ public class DefectPredictionSensor implements Sensor {
    */
   private double doubleFromProperty(Project project, String key, String defaultValue) {
     double result = Double.parseDouble(defaultValue);
-    try {
-      result = Double.parseDouble((String) project.getProperty(key));
-    } catch (Exception e) {
-      logger.warn("The property \"" + key
-        + "\" is not set to a valid number in Configuration > System > General Settings > "
-        + DefectPredictionPlugin.PLUGIN_NAME + ".  Using " + defaultValue + " instead.");
+    String property = (String) project.getProperty(key);
+    if (!StringUtils.isBlank(property)) {
+      try {
+        result = Double.parseDouble(property);
+      } catch (Exception e) {
+        logger.warn("The property \"" + key
+          + "\" is not set to a valid number in Configuration > System > General Settings > "
+          + DefectPredictionPlugin.PLUGIN_NAME + ".  Using " + defaultValue + " instead.");
+      }
     }
     return result;
   }
