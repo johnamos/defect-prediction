@@ -22,6 +22,7 @@ package com.revitasinc.sonar.dp.batch;
 import com.revitasinc.sonar.dp.DefectPredictionMetrics;
 import com.revitasinc.sonar.dp.DefectPredictionPlugin;
 import com.revitasinc.sonar.dp.batch.parser.ScmLogParserFactory;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import org.sonar.api.measures.Measure;
 import org.sonar.api.resources.Project;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -125,6 +127,20 @@ public class DefectPredictionSensor implements Sensor {
     set = normalizeScores(set);
     ScoreHolder.buildScoreMap(set);
     buildSortedMeasure(set, sensorContext);
+    writeToFile(set);
+  }
+
+  /**
+   * Writes the supplied set to a file in the current working directory.
+   * 
+   * @param set
+   */
+  private void writeToFile(Set<FileScore> set) {
+    try {
+      FileUtils.writeLines(new File("defect-prediction.txt"), set);
+    } catch (IOException e) {
+      logger.error("", e);
+    }
   }
 
   /**
