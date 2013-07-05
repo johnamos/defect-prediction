@@ -71,8 +71,8 @@ public class GitLogParser implements ScmLogParser {
 
   public Map<String, List<RevisionInfo>> parse(InputStream inputStream) {
     Map<String, List<RevisionInfo>> result = new HashMap<String, List<RevisionInfo>>();
-    // Wed May 2 15:24:20 2012 -0700
-    DateFormat df = new SimpleDateFormat("EEE MMM dd hh:mm:ss yyyy");
+    // ISO standard format (--date=iso) 2013-07-03 10:26:25 -0700
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     try {
       RevisionInfo revInfo = null;
       String author = null;

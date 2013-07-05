@@ -29,7 +29,7 @@ public class ScmLogParserFactoryTest {
   @Test
   public void testGetParser() {
     assertTrue(ScmLogParserFactory.getParser("cvs log -b") instanceof CvsLogParser);
-    assertTrue(ScmLogParserFactory.getParser("git log --numstat") instanceof GitLogParser);
+    assertTrue(ScmLogParserFactory.getParser("git log --numstat --date=iso") instanceof GitLogParser);
     assertNull(ScmLogParserFactory.getParser(""));
   }
 
