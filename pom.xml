@@ -6,7 +6,7 @@
     <groupId>org.codehaus.sonar-plugins</groupId>
     <artifactId>parent</artifactId>
     <!-- The latest version can be found by looking at the tags starting with "parent-" in http://svn.codehaus.org/sonar-plugins/tags/ -->
-    <version>15</version>
+    <version>16</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -31,8 +31,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sonar.buildVersion>3.4.1</sonar.buildVersion>
-    <jdk.min.version>1.5</jdk.min.version>
+    <sonar.buildVersion>3.6</sonar.buildVersion>
+    <jdk.min.version>1.6</jdk.min.version>
     <sonar.pluginName>Defect Prediction</sonar.pluginName>
     <sonar.pluginClass>com.revitasinc.sonar.dp.DefectPredictionPlugin</sonar.pluginClass>
   </properties>
